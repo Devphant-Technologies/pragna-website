@@ -60,7 +60,7 @@ export default function ProductsAlternatingSection() {
         const image = row.querySelector('.product-image-container');
         const text = row.querySelector('.product-text-container');
         const isReverse = row.classList.contains('md:flex-row-reverse');
-        
+
         gsap.fromTo(
           image,
           { x: isReverse ? 50 : -50, opacity: 0 },
@@ -100,7 +100,7 @@ export default function ProductsAlternatingSection() {
   return (
     <section ref={containerRef} className="py-24 bg-[#FDF8F5] relative overflow-hidden w-full">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="mb-20 text-center">
           <SectionHeader
@@ -118,9 +118,8 @@ export default function ProductsAlternatingSection() {
             return (
               <div
                 key={prod.id}
-                className={`product-row flex flex-col md:flex-row items-center gap-12 lg:gap-20 ${
-                  isEven ? '' : 'md:flex-row-reverse'
-                }`}
+                className={`product-row flex flex-col md:flex-row items-center gap-12 lg:gap-20 ${isEven ? '' : 'md:flex-row-reverse'
+                  }`}
               >
                 {/* Image Container */}
                 <div className="product-image-container w-full md:w-1/2 opacity-0">
@@ -139,11 +138,11 @@ export default function ProductsAlternatingSection() {
 
                 {/* Text Container */}
                 <div className="product-text-container w-full md:w-1/2 opacity-0 space-y-5">
-                  <h3 className="text-3xl sm:text-4xl font-sans tracking-tight leading-tight">
-                    <span className="text-[#0575D7] font-light block sm:inline mr-2">
+                  <h3 className="text-lg sm:text-xl md:text-[20px] lg:text-[24px] xl:text-[27px] font-sans tracking-tight leading-snug whitespace-nowrap">
+                    <span className="text-[#0575D7] font-light inline mr-2">
                       {prod.titlePart1}
                     </span>
-                    <span className="text-[#0D0D39] font-bold">
+                    <span className="text-[#0D0D39] font-bold inline">
                       {prod.titlePart2}
                     </span>
                   </h3>

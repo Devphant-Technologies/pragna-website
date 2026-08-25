@@ -141,10 +141,10 @@ function ContactForm() {
 
   return (
     <>
-      {/* Full-width section with dark navy background */}
-      <div className="w-full bg-[#0D0D39] py-20 -mt-8 relative z-10">
+      {/* Full-width section with sky blue background */}
+      <div className="w-full bg-[#90D5FF] py-20 -mt-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Left Side: Get in touch details card */}
           <div ref={infoRef} className="lg:col-span-1 opacity-0 flex flex-col">
             <div className="bg-[#07132e] border border-white/[0.08] rounded-[24px] p-8 md:p-10 flex-grow flex flex-col justify-between min-h-[480px]">
@@ -164,9 +164,12 @@ function ContactForm() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                       </svg>
                     </div>
-                    <div className="pt-0.5">
-                      <a href="mailto:info@pragna-group.com" className="text-white text-sm font-light hover:underline font-sans transition-all">
-                        info@pragna-group.com
+                    <div className="pt-0.5 flex flex-col gap-1.5">
+                      <a href="mailto:jignesh@pragnapharma.com" className="text-white text-sm font-light hover:underline font-sans transition-all break-all">
+                        jignesh@pragnapharma.com
+                      </a>
+                      <a href="mailto:sitaram@pragnadyechem.com" className="text-white text-sm font-light hover:underline font-sans transition-all break-all">
+                        sitaram@pragnadyechem.com
                       </a>
                     </div>
                   </li>
@@ -178,9 +181,12 @@ function ContactForm() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 01-6.727-6.727c-.155-.44.01-1.272.387-1.21l1.293-.97c.362-.271.528-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                       </svg>
                     </div>
-                    <div className="pt-0.5">
-                      <a href="tel:+912646250436" className="text-white text-sm font-light hover:underline font-sans transition-all">
-                        +91 2646 250436
+                    <div className="pt-0.5 flex flex-col gap-1.5">
+                      <a href="tel:+919723812606" className="text-white text-sm font-light hover:underline font-sans transition-all">
+                        +91 97238 12606
+                      </a>
+                      <a href="tel:+919913014035" className="text-white text-sm font-light hover:underline font-sans transition-all">
+                        +91 99130 14035
                       </a>
                     </div>
                   </li>
@@ -209,7 +215,7 @@ function ContactForm() {
           {/* Right Side: The White Form Card */}
           <div ref={formRef} className="lg:col-span-2 bg-white rounded-[32px] p-8 md:p-12 shadow-2xl opacity-0 flex flex-col justify-between">
             <form onSubmit={handleSubmit} className="space-y-6">
-              
+
               {/* Inquiry Type Radio Buttons */}
               <div className="flex items-center space-x-8 pb-4 font-sans">
                 <span className="text-[#4F5B76] font-semibold text-sm">Inquiry Type</span>
@@ -244,9 +250,8 @@ function ContactForm() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Name *"
-                  className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${
-                    errors.name ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                  }`}
+                  className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${errors.name ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                    }`}
                 />
                 {errors.name && <p className="text-red-500 text-xs font-medium pl-2">{errors.name}</p>}
               </div>
@@ -263,9 +268,8 @@ function ContactForm() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Email *"
-                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${
-                        errors.email ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                      }`}
+                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${errors.email ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                        }`}
                     />
                     {errors.email && <p className="text-red-500 text-xs font-medium pl-2">{errors.email}</p>}
                   </div>
@@ -278,9 +282,8 @@ function ContactForm() {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="Phone Number *"
-                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${
-                        errors.phone ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                      }`}
+                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${errors.phone ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                        }`}
                     />
                     {errors.phone && <p className="text-red-500 text-xs font-medium pl-2">{errors.phone}</p>}
                   </div>
@@ -296,9 +299,8 @@ function ContactForm() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Email *"
-                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${
-                        errors.email ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                      }`}
+                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${errors.email ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                        }`}
                     />
                     {errors.email && <p className="text-red-500 text-xs font-medium pl-2">{errors.email}</p>}
                   </div>
@@ -328,9 +330,8 @@ function ContactForm() {
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="Subject *"
-                    className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${
-                      errors.subject ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                    }`}
+                    className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${errors.subject ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                      }`}
                   />
                   {errors.subject && <p className="text-red-500 text-xs font-medium pl-2">{errors.subject}</p>}
                 </div>
@@ -361,9 +362,8 @@ function ContactForm() {
                       value={formData.subject}
                       onChange={handleChange}
                       placeholder="Subject *"
-                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${
-                        errors.subject ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                      }`}
+                      className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 ${errors.subject ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                        }`}
                     />
                     {errors.subject && <p className="text-red-500 text-xs font-medium pl-2">{errors.subject}</p>}
                   </div>
@@ -379,9 +379,8 @@ function ContactForm() {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Message"
-                  className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 resize-none ${
-                    errors.message ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
-                  }`}
+                  className={`w-full px-6 py-4 bg-white border rounded-[14px] text-sm focus:outline-none text-slate-800 placeholder-[#4F5B76]/50 resize-none ${errors.message ? 'border-red-500' : 'border-[#E2E8F0] focus:border-brand-cyan'
+                    }`}
                 ></textarea>
                 {errors.message && <p className="text-red-500 text-xs font-medium pl-2">{errors.message}</p>}
               </div>

@@ -1,117 +1,115 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PageBanner from '@/components/ui/PageBanner';
-import SectionHeader from '@/components/ui/SectionHeader';
+import ManufacturingInfographic from '@/components/about/ManufacturingInfographic';
+import { Download, Share2, X, Maximize2, Check, ZoomIn, ZoomOut } from 'lucide-react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+interface ImageDetail {
+  src: string;
+  title: string;
+  description: string;
 }
 
 export default function ManufacturingFacilities() {
+  const [selectedImage, setSelectedImage] = useState<ImageDetail | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [zoomScale, setZoomScale] = useState<number>(1);
+  
+  const images: ImageDetail[] = [
+    {
+      src: '/assets/manufacturing02.jpg',
+      title: 'Quality & Catalytic Runs Facility',
+      description: 'Dedicated environmental compliant systems implementing green process chemistry and catalysts recycling.',
+    },
+  ];
+
+  // Reset zoom scale whenever selected image changes or closes
+  useEffect(() => {
+    setZoomScale(1);
+  }, [selectedImage]);
+
+  // Animate the image cards on load
   const containerRef = useRef<HTMLDivElement>(null);
-  const overviewRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const extraRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Overview section staggers
-      if (overviewRef.current) {
-        const panels = overviewRef.current.querySelectorAll('.facility-card');
-        gsap.fromTo(
-          panels,
-          { y: 50, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.9,
-            stagger: 0.12,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: overviewRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-          }
-        );
-      }
-
-      // Capabilities staggers
-      if (statsRef.current) {
-        const leftPanel = statsRef.current.querySelector('.capabilities-panel');
-        const rightPanel = statsRef.current.querySelector('.etp-panel');
-
-        gsap.fromTo(
-          leftPanel,
-          { x: -40, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: statsRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-          }
-        );
-
-        gsap.fromTo(
-          rightPanel,
-          { x: 40, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: statsRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-          }
-        );
-      }
-    }, containerRef);
-    return () => ctx.revert();
+    if (containerRef.current) {
+      const cards = containerRef.current.querySelectorAll('.animate-card');
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: 'power3.out' }
+      );
+    }
   }, []);
 
-  const infrastructure = [
-    { label: 'Total Industrial Area', value: '3,00,000 Sq. mtr', icon: '📐' },
-    { label: 'Total Production Volume', value: '2000 kL', icon: '🛢️' },
-    { label: 'Stainless Steel Reactors (SSR)', value: '4 kL to 12.5 kL', icon: '⚛️' },
-    { label: 'Glass-Lined Reactors (GLR)', value: '3 kL to 20 kL', icon: '🧪' },
-    { label: 'Hydrogenation Reactors', value: '4 kL to 10 kL (20-40 Bar)', icon: '🌪️' },
-  ];
+  const handleShare = async (img: ImageDetail) => {
+    const shareUrl = `${window.location.origin}${img.src}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: img.title,
+          text: img.description,
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy text:', err);
+      }
+    }
+  };
 
-  const utilities = [
-    { label: 'Chilling Capacity', value: 'Down to -30°C', icon: '❄️' },
-    { label: 'Cooling Capacity', value: 'Down to 10°C', icon: '💧' },
-    { label: 'Steam Utility (LPS)', value: 'Up to 130°C', icon: '💨' },
-    { label: 'Thermic Fluid Heater', value: 'Up to 250°C', icon: '🔥' },
-    { label: 'Nitrogen Utility', value: 'In-house generation', icon: '🎈' },
-  ];
+  const handleDownload = async (img: ImageDetail) => {
+    setDownloading(true);
+    try {
+      const response = await fetch(img.src);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      // Get filename from path
+      const filename = img.src.split('/').pop() || 'manufacturing-facility.jpg';
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading file:', err);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
-  const capabilities = [
-    'Chlorination', 'Bromination', 'Coupling Reaction', 'Condensation Reaction',
-    'Grignard Reactions', 'Hydrogenation Reaction', 'Friedel-Crafts Alkylation',
-    'Photochemical Reactions', 'Catalytic Reaction', 'Amination', 'Oxidation', 'Nitration',
-  ];
+  const handleZoomIn = () => {
+    setZoomScale(prev => Math.min(prev + 0.25, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoomScale(prev => Math.max(prev - 0.25, 1));
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
+      
       <main ref={containerRef} className="flex-grow bg-[#FDF8F5] text-foreground transition-colors duration-300 pb-24">
         {/* Banner */}
         <PageBanner
           title="Manufacturing Facilities"
-          subtitle="High-capacity infrastructure supporting custom synthesis and toll manufacturing"
+          subtitle="Explore our advanced high-capacity industrial manufacturing units"
           breadcrumbs={[
             { label: 'Home', href: '/' },
             { label: 'Company', href: '/about' },
@@ -119,108 +117,136 @@ export default function ManufacturingFacilities() {
           ]}
         />
 
-        {/* Facilities Overview */}
-        <section ref={overviewRef} className="max-w-[1400px] mx-auto px-4 py-16 -mt-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            
-            {/* Infrastructure Grid */}
-            <div className="space-y-6">
-              <h2 className="text-xl md:text-2xl font-bold dark:text-white text-slate-900 flex items-center space-x-2.5 font-serif">
-                <span>🏭</span>
-                <span>Assets & Equipment Details</span>
-              </h2>
-              <div className="w-14 h-1 rounded-full bg-gradient-to-r from-brand-mint to-brand-cyan"></div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {infrastructure.map((inf, i) => (
-                  <div
-                    key={i}
-                    className="facility-card p-6 dark:bg-[#0B1626]/50 bg-white/70 border dark:border-white/5 border-slate-200 rounded-2xl space-y-3 shadow-lg hover:border-brand-mint/30 hover:scale-[1.03] transition-all duration-350 opacity-0 group relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-mint/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <span className="text-3xl dark:bg-slate-900/60 bg-slate-100 p-2 rounded-xl inline-block group-hover:scale-110 transition-transform">{inf.icon}</span>
-                    <div>
-                      <p className="dark:text-slate-500 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">{inf.label}</p>
-                      <p className="dark:text-white text-slate-900 font-bold text-base font-serif">{inf.value}</p>
+        {/* Facilities Showroom Section */}
+        <section className="max-w-[1400px] mx-auto px-4 py-16 -mt-8 relative z-10">
+          <div className="grid grid-cols-1 max-w-3xl mx-auto gap-10 md:gap-16">
+            {images.map((img, i) => (
+              <div 
+                key={i} 
+                className="animate-card opacity-0 flex flex-col group bg-white/60 border border-slate-200/80 rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 p-6 md:p-8 space-y-6"
+              >
+                {/* Visual Image Container (Renders the Full Uncropped Image) */}
+                <div 
+                  className="relative overflow-hidden w-full bg-slate-100/40 rounded-2xl flex items-center justify-center p-2 cursor-pointer" 
+                  onClick={() => setSelectedImage(img)}
+                >
+                  <img
+                    src={img.src}
+                    alt={img.title}
+                    className="w-full h-auto max-h-[500px] object-contain rounded-xl transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                  />
+                  
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-slate-950/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-2xl">
+                    <div className="p-4 bg-white/90 backdrop-blur-md rounded-full shadow-lg text-slate-800 scale-90 group-hover:scale-100 transition-all duration-300">
+                      <Maximize2 size={24} className="animate-pulse" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            {/* Utilities Grid */}
-            <div className="space-y-6">
-              <h2 className="text-xl md:text-2xl font-bold dark:text-white text-slate-900 flex items-center space-x-2.5 font-serif">
-                <span>⚡</span>
-                <span>Industrial Utilities</span>
-              </h2>
-              <div className="w-14 h-1 rounded-full bg-gradient-to-r from-brand-mint to-brand-cyan"></div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {utilities.map((ut, i) => (
-                  <div
-                    key={i}
-                    className="facility-card p-6 dark:bg-[#0B1626]/50 bg-white/70 border dark:border-white/5 border-slate-200 rounded-2xl space-y-3 shadow-lg hover:border-brand-mint/30 hover:scale-[1.03] transition-all duration-350 opacity-0 group relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-mint/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <span className="text-3xl dark:bg-slate-900/60 bg-slate-100 p-2 rounded-xl inline-block group-hover:scale-110 transition-transform">{ut.icon}</span>
-                    <div>
-                      <p className="dark:text-slate-500 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">{ut.label}</p>
-                      <p className="dark:text-white text-slate-900 font-bold text-base font-serif">{ut.value}</p>
-                    </div>
+                {/* Text Content & Details */}
+                <div className="flex flex-col justify-between flex-grow space-y-6">
+                  <div className="space-y-3">
+                    <h3 className="text-2xl font-bold text-slate-900 font-serif leading-tight">
+                      {img.title}
+                    </h3>
+                    <p className="text-slate-600 text-sm md:text-base leading-relaxed font-light font-sans">
+                      {img.description}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </div>
 
+                  {/* Actions Bar */}
+                  <div className="flex items-center space-x-4 pt-4 border-t border-slate-100">
+                    <button
+                      onClick={() => setSelectedImage(img)}
+                      className="flex-1 inline-flex items-center justify-center space-x-2 px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-widest rounded-2xl shadow-md transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                      <Maximize2 size={16} />
+                      <span>View Fullscreen</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleDownload(img)}
+                      title="Download Image"
+                      disabled={downloading}
+                      className="p-3.5 border border-slate-200 hover:border-brand-mint text-slate-700 hover:text-brand-mint rounded-2xl transition-all hover:bg-brand-mint/5 active:scale-[0.95] cursor-pointer disabled:opacity-50"
+                    >
+                      <Download size={18} />
+                    </button>
+
+                    <button
+                      onClick={() => handleShare(img)}
+                      title="Share Image"
+                      className="p-3.5 border border-slate-200 hover:border-brand-cyan text-slate-700 hover:text-brand-cyan rounded-2xl transition-all hover:bg-brand-cyan/5 active:scale-[0.95] cursor-pointer"
+                    >
+                      <Share2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Capabilities and Focus */}
-        <section ref={statsRef} className="max-w-[1400px] mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
-            {/* Reaction Capabilities */}
-            <div className="capabilities-panel lg:col-span-2 glass-card p-8 rounded-2xl border dark:border-white/5 border-slate-200 shadow-2xl space-y-6 opacity-0">
-              <h3 className="font-bold dark:text-white text-slate-900 text-xl flex items-center space-x-2.5 font-serif">
-                <span>⚗️</span>
-                <span>Process Reaction Capabilities</span>
-              </h3>
-              <p className="dark:text-brand-text-muted text-slate-600 text-sm leading-relaxed font-light">
-                Our facilities are engineered to carry out complex chemical transformations under high safety and thermal limits, including high-pressure hydrogenation, chlorination, and low-temperature chilling reactions.
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {capabilities.map((cap, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center space-x-2 dark:bg-slate-900/40 bg-slate-50 px-4 py-3.5 rounded-xl border dark:border-white/5 border-slate-200 text-xs font-semibold dark:text-slate-300 text-slate-700 hover:border-brand-mint/20 transition-all duration-300 shadow-sm"
-                  >
-                    <span className="text-brand-mint font-bold">•</span>
-                    <span>{cap}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Effluent Treatment Plant */}
-            <div className="etp-panel lg:col-span-1 glass-card dark:text-white text-slate-800 p-8 rounded-2xl border dark:border-white/5 border-slate-200 shadow-2xl flex flex-col justify-between hover:border-brand-mint/20 transition-all duration-300 opacity-0 group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-mint/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="space-y-5">
-                <span className="text-4xl dark:bg-slate-900/50 bg-slate-50 p-2.5 rounded-xl inline-block group-hover:scale-110 transition-transform">🌱</span>
-                <h3 className="font-bold text-lg dark:text-white text-slate-900 font-serif">Environmental Compliance</h3>
-                <p className="dark:text-brand-text-muted text-slate-600 text-sm leading-relaxed font-light">
-                  We own and operate our own Effluent Treatment Plant (ETP) that fully complies with state pollution control board norms and statutory environmental requirements.
-                </p>
-                <p className="dark:text-brand-text-muted text-slate-600 text-sm leading-relaxed font-light">
-                  Green process technology is utilized across all reaction lines to reduce waste and recycle key catalysts wherever possible.
-                </p>
-              </div>
-              <div className="pt-8 border-t dark:border-white/5 border-slate-200 text-brand-mint text-xs font-bold uppercase tracking-wider font-mono">
-                Zero Discharge Standards
-              </div>
-            </div>
-
-          </div>
-        </section>
+        <ManufacturingInfographic />
       </main>
+
+      {/* Lightbox / Immersive Full-Screen Modal (Occupies Entire Screen Page, No Text/Download/Share) */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center animate-fade-in select-none w-screen h-screen overflow-hidden"
+          onClick={() => setSelectedImage(null)}
+        >
+          {/* Floating Close Button in Top-Right */}
+          <button 
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-6 right-6 z-[100001] p-3.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white rounded-full transition-all cursor-pointer shadow-lg hover:rotate-90 duration-300"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Floating Zoom Controls at Bottom-Center */}
+          <div 
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[100001] flex items-center bg-slate-900/90 border border-white/10 backdrop-blur-md rounded-2xl p-1.5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={handleZoomOut}
+              disabled={zoomScale <= 1}
+              title="Zoom Out"
+              className="p-2 text-white hover:text-brand-mint hover:bg-white/5 rounded-xl transition-all cursor-pointer disabled:opacity-30 disabled:hover:text-white"
+            >
+              <ZoomOut size={18} />
+            </button>
+            <span className="px-4 text-white text-xs font-mono min-w-[60px] text-center select-none">
+              {Math.round(zoomScale * 100)}%
+            </span>
+            <button
+              onClick={handleZoomIn}
+              disabled={zoomScale >= 3}
+              title="Zoom In"
+              className="p-2 text-white hover:text-brand-mint hover:bg-white/5 rounded-xl transition-all cursor-pointer disabled:opacity-30 disabled:hover:text-white"
+            >
+              <ZoomIn size={18} />
+            </button>
+          </div>
+
+          {/* Full Screen Image Wrapper */}
+          <div className="w-full h-full overflow-auto flex items-center justify-center p-2">
+            <img
+              src={selectedImage.src}
+              alt={selectedImage.title}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                transform: `scale(${zoomScale})`,
+                transition: 'transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              }}
+              className="max-w-full max-h-full object-contain rounded-sm shadow-2xl select-none"
+            />
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

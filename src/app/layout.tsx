@@ -19,6 +19,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Pragna Group - Specially Agrochemicals, Dyes & Pharma Intermediates",
   description: "Established in 1999, Pragna Group is a premier manufacturer and exporter of speciality agrochemicals, dyes, and pharmaceutical intermediates.",
+  icons: {
+    icon: "/assets/pragna_group.png",
+    shortcut: "/assets/pragna_group.png",
+    apple: "/assets/pragna_group.png",
+  },
 };
 
 export default function RootLayout({

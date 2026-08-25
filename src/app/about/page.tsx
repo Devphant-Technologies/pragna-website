@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import PageBanner from '@/components/ui/PageBanner';
 import SectionHeader from '@/components/ui/SectionHeader';
 import StylishCarousel from '@/components/lightswind/stylish-carousel';
+import { ScrollTimeline } from '@/components/lightswind/scroll-timeline';
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -118,6 +119,63 @@ export default function Profile() {
     },
   ];
 
+  const timelineEvents = [
+    {
+      year: "1999",
+      title: "PRAGNA CHEMICAL INDUSTRIES",
+      subtitle: "Establishment & Inception",
+      description: "Manufacturing of Dyes & Intermediates",
+    },
+    {
+      year: "2006",
+      title: "PRAGNA DYECHEM PVT LTD",
+      subtitle: "Expansion & Growth",
+      description: "Manufacturing of Speciality Chemicals & Intermediates",
+    },
+    {
+      year: "2012",
+      title: "PRAGNA LIFE SCIENCE LLP",
+      subtitle: "Diversification Hub",
+      description: "Manufacturing of Speciality & Fine Chemicals & Intermediates",
+    },
+    {
+      year: "2017",
+      title: "PRAGNA PHARMA PVT LTD",
+      subtitle: "Pharma Grade Facility",
+      description: "Manufacturing of Speciality Chemicals & Agro Chemicals Intermediates",
+    },
+    {
+      year: "2021",
+      title: "GREEN LEAF CHEM TECH PVT LTD",
+      subtitle: "Sustainable Process Focus",
+      description: "Manufacturing of Speciality Chemicals & Agro Chemicals Intermediates",
+    },
+    {
+      year: "2022",
+      title: "PRAGNA CHEM TECH PVT LTD",
+      subtitle: "Tech Intermediates Growth",
+      description: "Manufacturing of Dyes & Intermediates",
+    },
+    {
+      year: "2022",
+      title: "PRAGNA SPECIALITY PVT LTD",
+      subtitle: "Agro & Speciality Chemistry",
+      description: "Manufacturing of Speciality & Agro Chemicals",
+    },
+    {
+      year: "2024",
+      title: "PRAGNA FOIL PVT LTD",
+      subtitle: "Industrial Foil Solutions",
+      description: "High-quality Aluminum foils manufacturer",
+    },
+    {
+      year: "2024",
+      title: "SHREE RAM KRISHNA CHEM TECH PVT LTD",
+      subtitle: "Advanced Intermediates",
+      description: "Manufacturing of Pharma & Pharma Intermediates",
+    },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -175,7 +233,7 @@ export default function Profile() {
         </section>
 
         {/* Why Choose Us */}
-        <section ref={chooseRef} className="w-full bg-[#0D0D39] py-20 overflow-hidden">
+        <section ref={chooseRef} className="w-full bg-[#90D5FF] py-20 overflow-hidden">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
               <SectionHeader
@@ -183,7 +241,7 @@ export default function Profile() {
                 title="Why Choose"
                 highlight="Us?"
                 align="center"
-                light={true}
+                light={false}
               />
             </div>
 
@@ -205,6 +263,25 @@ export default function Profile() {
                 />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Legacy of Excellence Scroll Timeline */}
+        <section className="py-24 bg-[#FDF8F5] relative overflow-hidden border-t border-slate-100">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollTimeline
+              events={timelineEvents}
+              title="Legacy of Excellence"
+              subtitle="Scroll to explore our chronological journey from inception to industry leadership"
+              progressIndicator={true}
+              cardAlignment="alternating"
+              revealAnimation="slide"
+              activeColor="bg-[#0575D7]"
+              lineColor="bg-[#0575D7]/15"
+              cardVariant="elevated"
+              cardEffect="shadow"
+              smoothScroll={true}
+            />
           </div>
         </section>
       </main>

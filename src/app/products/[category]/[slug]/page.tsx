@@ -126,10 +126,10 @@ export default function ProductDetailPage({ params }: PageProps) {
               <div className="glass-card rounded-2xl border dark:border-white/5 border-slate-200 p-6 md:p-8 space-y-6 shadow-2xl">
                 
                 {/* Tabs */}
-                <div className="flex border-b dark:border-white/5 border-slate-200">
+                <div className="flex border-b dark:border-white/5 border-slate-200 overflow-x-auto no-scrollbar whitespace-nowrap">
                   <button
                     onClick={() => setActiveTab('specs')}
-                    className={`pb-4 px-6 text-sm font-bold uppercase tracking-wider relative transition-colors cursor-pointer ${
+                    className={`pb-4 px-4 sm:px-6 text-xs sm:text-sm font-bold uppercase tracking-wider relative transition-colors cursor-pointer shrink-0 ${
                       activeTab === 'specs' ? 'text-brand-mint font-extrabold' : 'dark:text-slate-400 text-slate-500 hover:text-slate-800'
                     }`}
                   >
@@ -140,7 +140,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                   </button>
                   <button
                     onClick={() => setActiveTab('safety')}
-                    className={`pb-4 px-6 text-sm font-bold uppercase tracking-wider relative transition-colors cursor-pointer ${
+                    className={`pb-4 px-4 sm:px-6 text-xs sm:text-sm font-bold uppercase tracking-wider relative transition-colors cursor-pointer shrink-0 ${
                       activeTab === 'safety' ? 'text-brand-mint font-extrabold' : 'dark:text-slate-400 text-slate-500 hover:text-slate-800'
                     }`}
                   >
@@ -161,7 +161,7 @@ export default function ProductDetailPage({ params }: PageProps) {
 
                     <div className="space-y-4">
                       <h3 className="text-lg font-bold dark:text-white text-slate-900 font-serif">Standard Certificate Specifications</h3>
-                      <div className="overflow-hidden rounded-xl border dark:border-white/5 border-slate-200 shadow-lg">
+                      <div className="overflow-x-auto rounded-xl border dark:border-white/5 border-slate-200 shadow-lg">
                         <table className="min-w-full divide-y dark:divide-white/5 divide-slate-200">
                           <thead className="dark:bg-slate-900/60 bg-slate-50">
                             <tr>

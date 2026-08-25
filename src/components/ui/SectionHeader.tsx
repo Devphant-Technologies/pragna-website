@@ -48,12 +48,12 @@ export default function SectionHeader({ badge, title, highlight, subtitle, align
   }, []);
 
   return (
-    <div ref={headerRef} className={`space-y-4 ${align === 'center' ? 'text-center max-w-3xl mx-auto' : 'text-left max-w-2xl'}`}>
+    <div ref={headerRef} className={`space-y-4 ${align === 'center' ? 'text-center max-w-3xl mx-auto' : 'text-left max-w-4xl'}`}>
       <span className="section-badge inline-flex items-center space-x-2 text-xs font-bold text-brand-mint tracking-[0.25em] uppercase opacity-0">
         <span className="h-1.5 w-1.5 rounded-full bg-brand-mint blink-dot"></span>
         <span>{badge}</span>
       </span>
-      <h2 className={`text-3xl md:text-5xl font-bold leading-tight tracking-tight mt-1 opacity-0 ${light ? 'text-white' : 'text-black'}`}>
+      <h2 className={`text-3xl md:text-5xl font-bold leading-tight tracking-tight mt-1 opacity-0 ${light ? 'text-white' : 'text-black'} sm:whitespace-nowrap`}>
         {title}{' '}
         {highlight && <span className="text-brand-cyan">{highlight}</span>}
       </h2>

@@ -52,7 +52,7 @@ function StatCard({ stat, className }: StatCardProps) {
     <div
       ref={ref}
       className={cn(
-        "relative overflow-hidden group flex items-center gap-4 pl-12 pr-6 py-5 rounded-2xl bg-[#0B1E36] border border-white/5 shadow-xl transition-all duration-300 w-full max-w-[280px] z-10 cursor-pointer",
+        "relative overflow-hidden group flex items-center gap-4 pl-12 pr-6 py-5 rounded-2xl bg-[#0B1E36] border border-white/5 shadow-xl transition-all duration-300 w-full z-10 cursor-pointer",
         className
       )}
     >
@@ -84,39 +84,39 @@ export default function StatsSection() {
   const columns = [
     {
       stats: [
-        { end: 6, suffix: '', label: 'Manufacturing Sites' },
-        { end: 30000, suffix: '+', label: 'MPTA Installed Capacity' },
+        { end: 9, suffix: '', label: 'Manufacturing Sites' },
+        { end: 30000, suffix: '+', label: 'MTPA Installed Capacity' },
       ],
-      staggerClasses: ["mt-12", "mt-32"],
+      staggerClasses: ["mt-0", ""],
     },
     {
       stats: [
         { end: 60, suffix: '+', label: 'Complex Molecules' },
         { end: 30, suffix: '+', label: 'Commercial Chemistries' },
       ],
-      staggerClasses: ["mt-32", "mt-32"],
+      staggerClasses: ["mt-6", ""],
     },
     {
       stats: [
         { end: 1700, suffix: '+', label: 'Empowered Workforce' },
         { end: 90, suffix: '+', label: 'Scientists' },
       ],
-      staggerClasses: ["mt-12", "mt-32"],
+      staggerClasses: ["mt-0", ""],
     },
     {
       stats: [
-        { end: 40, suffix: '+', label: 'Years of Experience' },
+        { end: 27, suffix: '+', label: 'Years of Experience' },
         { end: 80, suffix: '+', label: 'Customers' },
       ],
-      staggerClasses: ["mt-32", "mt-32"],
+      staggerClasses: ["mt-6", ""],
     },
   ];
 
   return (
-    <section className="py-24 bg-[#051126] text-white relative overflow-hidden">
+    <section className="pt-4 pb-16 lg:pt-6 lg:pb-20 bg-[#90D5FF] text-white relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+      <div className="absolute inset-0 opacity-[0.1]" style={{
+        backgroundImage: 'radial-gradient(circle at 2px 2px, #0D0D39 1px, transparent 0)',
         backgroundSize: '40px 40px'
       }}></div>
 
@@ -124,21 +124,21 @@ export default function StatsSection() {
         {/* Responsive Layout */}
         {/* Mobile View: Vertical stacking list with one line */}
         <div className="block lg:hidden relative pl-8 py-4 space-y-6">
-          <div className="absolute top-0 bottom-0 left-[28px] w-px bg-white/10" />
+          <div className="absolute top-0 bottom-0 left-[28px] w-px bg-[#0D0D39]/20" />
           {columns.flatMap(col => col.stats).map((stat, idx) => (
             <StatCard key={idx} stat={stat} />
           ))}
         </div>
 
         {/* Desktop View: Staggered columns */}
-        <div className="hidden lg:grid grid-cols-4 gap-8 xl:gap-12 min-h-[600px]">
+        <div className="hidden lg:grid grid-cols-4 gap-x-10 gap-y-12 xl:gap-x-16">
           {columns.map((col, colIdx) => (
-            <div key={colIdx} className="relative w-full h-full flex flex-col pt-4 pb-12">
+            <div key={colIdx} className="relative w-full flex flex-col py-2">
               {/* Vertical line running behind the dot */}
-              <div className="absolute top-0 bottom-0 left-[28px] w-px bg-white/10" />
+              <div className="absolute top-0 bottom-0 left-[28px] w-px bg-[#0D0D39]/20" />
 
               {/* Cards in this column */}
-              <div className="flex flex-col h-full justify-start">
+              <div className="flex flex-col gap-12">
                 <div className={col.staggerClasses[0]}>
                   <StatCard stat={col.stats[0]} />
                 </div>

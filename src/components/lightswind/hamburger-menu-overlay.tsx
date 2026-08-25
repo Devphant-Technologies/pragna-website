@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 
@@ -95,14 +93,8 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const buttonSizes = {
     sm: "w-10 h-10",
@@ -118,20 +110,18 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
     "2xl": "text-6xl md:text-7xl",
   };
 
-  const closeMenu = () => {
-    setIsOpen(false);
-    setExpandedIndex(null);
-    onClose?.();
-  };
-
   const toggleMenu = () => {
-    if (isOpen) {
-      closeMenu();
-      return;
+    const newState = !isOpen;
+    setIsOpen(newState);
+    if (!newState) {
+      setExpandedIndex(null);
     }
 
-    setIsOpen(true);
-    onOpen?.();
+    if (newState) {
+      onOpen?.();
+    } else {
+      onClose?.();
+    }
   };
 
   const handleItemClick = (item: MenuItem, index: number = -1) => {
@@ -144,8 +134,14 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
       item.onClick();
     }
 
+    if (item.href && !item.onClick) {
+      window.location.href = item.href;
+    }
+
     if (!keepOpenOnItemClick) {
-      closeMenu();
+      setIsOpen(false);
+      setExpandedIndex(null);
+      onClose?.();
     }
   };
 
@@ -153,7 +149,9 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
-        closeMenu();
+        setIsOpen(false);
+        setExpandedIndex(null);
+        onClose?.();
       }
     };
 
@@ -161,171 +159,52 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
-  // Lock page scroll while the overlay is open so touches stay on the menu
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const html = document.documentElement;
-    const body = document.body;
-    const scrollY = window.scrollY;
-
-    const previous = {
-      htmlOverflow: html.style.overflow,
-      htmlOverscroll: html.style.overscrollBehavior,
-      htmlScrollBehavior: html.style.scrollBehavior,
-      bodyOverflow: body.style.overflow,
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyLeft: body.style.left,
-      bodyRight: body.style.right,
-      bodyWidth: body.style.width,
-    };
-
-    html.style.overflow = "hidden";
-    html.style.overscrollBehavior = "none";
-    html.style.scrollBehavior = "auto";
-    body.style.overflow = "hidden";
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.width = "100%";
-
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
-    }
-
-    return () => {
-      html.style.overflow = previous.htmlOverflow;
-      html.style.overscrollBehavior = previous.htmlOverscroll;
-      html.style.scrollBehavior = previous.htmlScrollBehavior;
-      body.style.overflow = previous.bodyOverflow;
-      body.style.position = previous.bodyPosition;
-      body.style.top = previous.bodyTop;
-      body.style.left = previous.bodyLeft;
-      body.style.right = previous.bodyRight;
-      body.style.width = previous.bodyWidth;
-      window.scrollTo(0, scrollY);
-    };
-  }, [isOpen]);
-
-  const clipPathCenter = buttonRight
-    ? `calc(100% - ${buttonRight})`
+  const clipPathCenter = buttonRight 
+    ? `calc(100% - ${buttonRight})` 
     : (buttonLeft || "60px");
 
-  const rowClassName =
-    "flex items-center justify-between w-full min-h-[44px] cursor-pointer select-none touch-manipulation text-left";
-
-  const renderRow = (item: MenuItem, index: number) => {
-    const label = (
-      <span className="flex items-center gap-2 pointer-events-none">
-        {item.icon && <span className="menu-icon">{item.icon}</span>}
-        {item.label}
-      </span>
-    );
-
-    const chevron =
-      item.subItems && item.subItems.length > 0 ? (
-        <span
-          className={`text-xs transition-transform duration-300 ml-4 opacity-60 pointer-events-none ${
-            expandedIndex === index ? "rotate-180 text-brand-mint" : "rotate-0"
-          }`}
-        >
-          ▼
-        </span>
-      ) : null;
-
-    if (item.subItems && item.subItems.length > 0) {
-      return (
-        <button
-          type="button"
-          className={rowClassName}
-          aria-expanded={expandedIndex === index}
-          onClick={() => handleItemClick(item, index)}
-        >
-          {label}
-          {chevron}
-        </button>
-      );
-    }
-
-    if (item.href) {
-      return (
-        <Link
-          href={item.href}
-          className={rowClassName}
-          onClick={() => handleItemClick(item, index)}
-        >
-          {label}
-        </Link>
-      );
-    }
-
-    return (
-      <button
-        type="button"
-        className={rowClassName}
-        onClick={() => handleItemClick(item, index)}
-      >
-        {label}
-      </button>
-    );
-  };
-
-  if (!mounted) return null;
-
-  return createPortal(
-    <div
-      ref={containerRef}
-      className={cn("fixed inset-0 pointer-events-none", className)}
-    >
+  return (
+    <div ref={containerRef} className={cn("absolute w-full h-full", className)}>
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Krona+One:wght@400&display=swap');
           
           .hamburger-overlay-${zIndex} {
-            position: absolute;
-            inset: 0;
+            position: relative;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: stretch;
+            justify-content: start;
+            align-items: center;
             background: ${overlayBackground};
             z-index: ${zIndex};
             clip-path: circle(0px at ${clipPathCenter} ${buttonTop});
             transition: clip-path ${animationDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             ${enableBlur ? "backdrop-filter: blur(10px);" : ""}
-            pointer-events: none;
-            overflow: hidden;
-            overscroll-behavior: none;
-            -webkit-tap-highlight-color: transparent;
+            pointer-events: auto;
           }
           
           .hamburger-overlay-${zIndex}.open {
             clip-path: circle(150% at ${clipPathCenter} ${buttonTop});
-            pointer-events: auto;
           }
           
           .hamburger-button-${zIndex} {
             position: absolute;
-            ${buttonRight ? `right: ${buttonRight}; left: auto;` : `left: ${buttonLeft || "60px"};`}
+            ${buttonRight ? `right: ${buttonRight}; left: auto; transform: translate(50%, -50%);` : `left: ${buttonLeft || "60px"}; transform: translate(-50%, -50%);`}
             top: ${buttonTop};
-            transform: translateY(-50%);
             border-radius: 20px;
-            z-index: ${zIndex + 10};
+            z-index: ${zIndex + 1};
             background: ${buttonColor};
             border: none;
             cursor: pointer;
-            transition: transform 0.3s ease, background 0.3s ease;
+            transition: all 0.3s ease;
             pointer-events: auto;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
           }
           
           .hamburger-button-${zIndex}:hover {
-            transform: translateY(-50%) scale(1.1);
+            ${buttonRight ? `transform: translate(50%, -50%) scale(1.1);` : `transform: translate(-50%, -50%) scale(1.1);`}
           }
           
           .hamburger-button-${zIndex}:focus {
@@ -341,30 +220,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
             stroke: ${textColor} !important;
           }
           
-          .menu-scroll-${zIndex} {
-            flex: 1 1 auto;
-            min-height: 0;
-            width: 100%;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            touch-action: pan-y;
-            padding: 5.5rem 1.25rem calc(2rem + env(safe-area-inset-bottom, 0px));
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-          }
-          
-          .menu-scroll-${zIndex}::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-          }
-          
           .menu-items-${zIndex} {
-            width: 100%;
-            max-width: 36rem;
-            margin: 0 auto;
             ${menuDirection === "horizontal" ? "display: flex; flex-wrap: wrap; gap: 1rem;" : ""}
             ${menuAlignment === "center" ? "text-align: center;" : ""}
             ${menuAlignment === "right" ? "text-align: right;" : ""}
@@ -373,7 +229,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
           .menu-item-${zIndex} {
             position: relative;
             list-style: none;
-            padding: 0.35rem 0;
+            padding: 0.5rem 0;
             cursor: pointer;
             transform: translateX(-200px);
             opacity: 0;
@@ -404,11 +260,9 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
             pointer-events: none;
           }
           
-          @media (hover: hover) and (pointer: fine) {
-            .menu-item-${zIndex}:hover::before {
-              opacity: 1;
-              transform: translate(-50%, -50%) translateX(0);
-            }
+          .menu-item-${zIndex}:hover::before {
+            opacity: 1;
+            transform: translate(-50%, -50%) translateX(0);
           }
           
           .menu-item-${zIndex} span {
@@ -423,18 +277,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
             opacity: 1;
           }
           
-          .menu-item-${zIndex} a,
-          .menu-item-${zIndex} button {
-            color: inherit;
-            font: inherit;
-            text-align: inherit;
-            background: transparent;
-            border: 0;
-            padding: 0.4rem 0;
-            width: 100%;
-          }
-          
-          .menu-item-${zIndex}:focus-within {
+          .menu-item-${zIndex}:focus {
             outline: 2px solid ${textColor};
             outline-offset: 2px;
             border-radius: 4px;
@@ -443,29 +286,26 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
           /* Mobile responsiveness */
           @media (max-width: 768px) {
             .hamburger-button-${zIndex} {
-              ${buttonRight ? `right: 16px; left: auto;` : `left: 16px;`}
-              top: 32px;
-              transform: translateY(-50%);
-            }
-            
-            .hamburger-button-${zIndex}:hover {
-              transform: translateY(-50%) scale(1.05);
+              ${buttonRight ? `right: 24px; left: auto; transform: translate(50%, -50%);` : `left: 30px; transform: translate(-50%, -50%);`}
+              top: 30px;
             }
             
             .hamburger-overlay-${zIndex} {
-              clip-path: circle(0px at ${buttonRight ? "calc(100% - 16px)" : "16px"} 32px);
+              clip-path: circle(0px at ${buttonRight ? "calc(100% - 24px)" : "30px"} 30px);
             }
             
             .hamburger-overlay-${zIndex}.open {
-              clip-path: circle(150% at ${buttonRight ? "calc(100% - 16px)" : "16px"} 32px);
+              clip-path: circle(150% at ${buttonRight ? "calc(100% - 24px)" : "30px"} 30px);
+            }
+            
+            .menu-items-${zIndex} {
+              padding: 1rem;
+              max-height: 80vh;
+              overflow-y: auto;
             }
             
             .menu-item-${zIndex} {
-              padding: 0.15rem 0;
-            }
-            
-            .menu-item-${zIndex}::before {
-              display: none;
+              padding: 1rem 0;
             }
           }
           
@@ -484,78 +324,73 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
       {/* Navigation Overlay */}
       <div
         ref={navRef}
-        className={cn(`hamburger-overlay-${zIndex}`, isOpen && "open")}
+        className={cn(`flex flex-col items-center justify-center h-full
+           hamburger-overlay-${zIndex}`, isOpen && "open")}
         aria-hidden={!isOpen}
       >
-        <nav
-          ref={scrollRef}
-          id="navigation-menu"
-          className={`menu-scroll-${zIndex}`}
+        <ul
+          className={cn(
+            `mt-20 menu-items-${zIndex}`,
+            menuDirection === "horizontal" && "flex flex-wrap "
+          )}
         >
-          <ul
-            className={cn(
-              `menu-items-${zIndex}`,
-              menuDirection === "horizontal" && "flex flex-wrap "
-            )}
-          >
-            {items.map((item, index) => (
-              <li
-                key={index}
-                className={cn(
-                  `menu-item-${zIndex} flex flex-col items-stretch`,
-                  fontSizes[fontSize],
-                  isOpen && "visible",
-                  menuItemClassName
-                )}
-                style={{
-                  transitionDelay: isOpen ? `${index * staggerDelay}s` : "0s",
-                }}
+          {items.map((item, index) => (
+            <li
+              key={index}
+              className={cn(
+                `menu-item-${zIndex} flex flex-col items-start`,
+                fontSizes[fontSize],
+                isOpen && "visible",
+                menuItemClassName
+              )}
+              style={{
+                transitionDelay: isOpen ? `${index * staggerDelay}s` : "0s",
+              }}
+              role="button"
+              aria-label={`Navigate to ${item.label}`}
+            >
+              <div 
+                className="flex items-center justify-between w-full cursor-pointer select-none"
+                onClick={() => handleItemClick(item, index)}
               >
-                {renderRow(item, index)}
-
-                {/* Sub-menu rendering */}
-                {item.subItems && item.subItems.length > 0 && expandedIndex === index && (
-                  <ul className="pl-6 mt-2 mb-2 space-y-1 w-full border-l-2 border-brand-mint/20 text-left">
-                    {item.subItems.map((sub, subIdx) => (
-                      <li key={subIdx}>
-                        {sub.href ? (
-                          <Link
-                            href={sub.href}
-                            className="text-lg md:text-xl font-medium text-slate-350 hover:text-brand-mint cursor-pointer flex items-center gap-2 transition-colors py-2 min-h-[40px] select-none touch-manipulation"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleItemClick(sub, -1);
-                            }}
-                          >
-                            {sub.icon && <span className="text-xs">{sub.icon}</span>}
-                            <span>{sub.label}</span>
-                          </Link>
-                        ) : (
-                          <button
-                            type="button"
-                            className="text-lg md:text-xl font-medium text-slate-350 hover:text-brand-mint cursor-pointer flex items-center gap-2 transition-colors py-2 min-h-[40px] select-none touch-manipulation w-full text-left"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleItemClick(sub, -1);
-                            }}
-                          >
-                            {sub.icon && <span className="text-xs">{sub.icon}</span>}
-                            <span>{sub.label}</span>
-                          </button>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+                <span className="flex items-center gap-2">
+                  {item.icon && <span className="menu-icon">{item.icon}</span>}
+                  {item.label}
+                </span>
+                {item.subItems && item.subItems.length > 0 && (
+                  <span className={`text-xs transition-transform duration-300 ml-4 opacity-60 ${
+                    expandedIndex === index ? 'rotate-185 text-brand-mint' : 'rotate-0'
+                  }`}>
+                    ▼
+                  </span>
                 )}
-              </li>
-            ))}
-          </ul>
-        </nav>
+              </div>
+
+              {/* Sub-menu rendering */}
+              {item.subItems && item.subItems.length > 0 && expandedIndex === index && (
+                <ul className="pl-6 mt-3 space-y-2.5 w-full border-l-2 border-brand-mint/20 text-left">
+                  {item.subItems.map((sub, subIdx) => (
+                    <li
+                      key={subIdx}
+                      className="text-lg md:text-xl font-medium text-slate-350 hover:text-brand-mint cursor-pointer flex items-center gap-2 transition-colors py-1 select-none"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleItemClick(sub, -1);
+                      }}
+                    >
+                      {sub.icon && <span className="text-xs">{sub.icon}</span>}
+                      <span>{sub.label}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Hamburger Button */}
       <button
-        type="button"
         className={cn(
           `hamburger-button-${zIndex}`,
           buttonSizes[buttonSize],
@@ -591,8 +426,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
           </div>
         )}
       </button>
-    </div>,
-    document.body
+    </div>
   );
 };
 

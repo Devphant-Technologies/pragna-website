@@ -45,7 +45,23 @@ export default function Home() {
           <main className="flex-grow">
             <HeroSection />
 
-            <div className="bg-[#0D0D39] py-24 w-full overflow-hidden">
+            {/* Mobile View: Simple stacked cards without animation to prevent truncation */}
+            <div className="block lg:hidden bg-[#90D5FF] py-12 w-full overflow-hidden">
+              <div className="max-w-[1400px] mx-auto px-4 sm:px-6 space-y-8">
+                <div className="overflow-hidden rounded-[2.5rem] border border-black/8 shadow-lg">
+                  <AboutTeaser />
+                </div>
+                <div className="overflow-hidden rounded-[2.5rem] border border-black/8 shadow-lg">
+                  <FeatureCards />
+                </div>
+                <div className="overflow-hidden rounded-[2.5rem] border border-black/8 shadow-lg">
+                  <ProductsShowcase />
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop View: ScrollStack animation */}
+            <div className="hidden lg:block bg-[#90D5FF] pt-12 pb-4 w-full overflow-hidden">
               <ScrollStack
                 useWindowScroll={true}
                 itemDistance={100}

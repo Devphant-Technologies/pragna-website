@@ -22,18 +22,15 @@ export default function HeroSection() {
 
   return (
     <section ref={containerRef} className="relative h-screen w-full flex items-center overflow-hidden">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0 bg-[#FDF8F5]" >
-        <video
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-100 bg-[#FDF8F5]"
-        >
-          <source src="/assets/banner_video.mp4" type="video/mp4" />
-        </video>
-        {/* Multi-layer gradient overlays */}
-        {/* <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, #0A1628, rgba(10,22,40,0.7), transparent)' }}></div>
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0A1628, transparent, rgba(10,22,40,0.5))' }}></div>
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,22,40,0.3), transparent, #0A1628)' }}></div> */}
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0 bg-[#FDF8F5]">
+        <img
+          src="/assets/hero01.jpg"
+          alt="Pragna Group Speciality Chemicals"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Multi-layer gradient overlays for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FDF8F5]/80 via-[#FDF8F5]/20 to-transparent"></div>
       </div>
 
       {/* Floating decorative elements */}
@@ -80,9 +77,9 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-40 animate-bounce">
-        <span className="text-[9px] uppercase tracking-widest text-white font-semibold">Scroll Down</span>
-        <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-60 animate-bounce">
+        <span className="text-[9px] uppercase tracking-widest text-[#0D0D39] font-semibold">Scroll Down</span>
+        <svg className="h-4 w-4 text-[#0D0D39]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7-7-7" />
         </svg>
       </div>

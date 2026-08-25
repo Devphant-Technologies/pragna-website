@@ -80,7 +80,7 @@ export default function AboutTeaser() {
               </div>
               {/* Decorative floating badge */}
               <div className="absolute -bottom-4 -left-4 bg-white border border-slate-200 rounded-2xl px-4 py-3 shadow-xl animate-float">
-                <span className="text-2xl font-bold text-brand-mint">25+</span>
+                <span className="text-2xl font-bold text-brand-mint">27+</span>
                 <span className="text-xs text-slate-600 block">Years of Excellence</span>
               </div>
             </div>
