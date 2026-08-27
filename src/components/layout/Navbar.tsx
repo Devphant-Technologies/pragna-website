@@ -170,29 +170,27 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Hamburger Navigation (Visible on Mobile only) */}
-          <div className="flex lg:hidden items-center space-x-6 relative z-[1001]">
+          {/* Hamburger spacer so the logo does not shift; the real button is portaled */}
+          <div className="flex lg:hidden items-center relative z-[1001]">
             <div className="w-12 h-12 shrink-0" />
           </div>
 
-          {/* Hamburger Menu Overlay (Hidden on Desktop) */}
           <HamburgerMenuOverlay
             items={menuItems}
-            buttonTop="28px"
-            buttonRight="44px"
+            buttonTop="12px"
+            buttonRight="16px"
             buttonSize="md"
             buttonColor="transparent"
-            buttonClassName="lg:hidden text-slate-800 dark:text-[#FDF8F5] hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors focus:outline-none z-[10001]"
+            buttonClassName="hover:bg-slate-900/5 transition-colors focus:outline-none"
             overlayBackground="linear-gradient(135deg, #050e1d 0%, #0c1a2f 100%)"
             textColor="#FDF8F5"
             fontSize="sm"
             fontWeight="semibold"
             fontFamily="var(--font-sans)"
-            enableBlur={true}
-            menuAlignment="center"
-            animationDuration={1}
-            zIndex={10000}
-            className="fixed inset-0 pointer-events-none z-[10000] lg:hidden"
+            enableBlur={false}
+            menuAlignment="left"
+            animationDuration={0.7}
+            zIndex={10050}
             menuItemClassName="hover:text-brand-mint transition-colors"
           />
 

@@ -1,5 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 
@@ -12,72 +15,47 @@ export interface MenuItem {
 }
 
 export interface HamburgerMenuOverlayProps {
-  /** Array of menu items */
   items: MenuItem[];
-  /** Button position from top */
   buttonTop?: string;
-  /** Button position from left */
   buttonLeft?: string;
-  /** Button position from right */
   buttonRight?: string;
-  /** Button size */
   buttonSize?: "sm" | "md" | "lg";
-  /** Button background color */
   buttonColor?: string;
-  /** Overlay background color/gradient */
   overlayBackground?: string;
-  /** Menu text color */
   textColor?: string;
-  /** Menu font size */
   fontSize?: "sm" | "md" | "lg" | "xl" | "2xl";
-  /** Font family */
   fontFamily?: string;
-  /** Font weight */
   fontWeight?: "normal" | "medium" | "semibold" | "bold";
-  /** Animation duration in seconds */
   animationDuration?: number;
-  /** Stagger delay between menu items */
   staggerDelay?: number;
-  /** Menu items alignment */
   menuAlignment?: "left" | "center" | "right";
-  /** Custom class for container */
   className?: string;
-  /** Custom class for button */
   buttonClassName?: string;
-  /** Custom class for menu items */
   menuItemClassName?: string;
-  /** Disable overlay close on item click */
   keepOpenOnItemClick?: boolean;
-  /** Custom button content */
   customButton?: React.ReactNode;
-  /** ARIA label for accessibility */
   ariaLabel?: string;
-  /** Callback when menu opens */
   onOpen?: () => void;
-  /** Callback when menu closes */
   onClose?: () => void;
-  /** Menu items layout direction */
   menuDirection?: "vertical" | "horizontal";
-  /** Enable blur backdrop */
   enableBlur?: boolean;
-  /** Z-index for overlay */
   zIndex?: number;
 }
 
 export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
   items = [],
-  buttonTop = "60px",
+  buttonTop = "16px",
   buttonLeft,
-  buttonRight = "60px",
+  buttonRight = "16px",
   buttonSize = "md",
-  buttonColor = "#6c8cff",
+  buttonColor = "transparent",
   overlayBackground = "#6c8cff",
   textColor = "#ffffff",
   fontSize = "md",
-  fontFamily = '"Krona One", monospace',
-  fontWeight = "bold",
-  animationDuration = 1.5,
-  staggerDelay = 0.1,
+  fontFamily = "var(--font-sans)",
+  fontWeight = "semibold",
+  animationDuration = 0.7,
+  staggerDelay = 0.06,
   menuAlignment = "left",
   className,
   buttonClassName,
@@ -88,13 +66,13 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
   onOpen,
   onClose,
   menuDirection = "vertical",
-  enableBlur = false,
-  zIndex = 1000,
+  zIndex = 10050,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const navRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const scrollRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
 
   const buttonSizes = {
     sm: "w-10 h-10",
@@ -103,299 +81,332 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
   };
 
   const fontSizes = {
-    sm: "text-2xl md:text-3xl",
+    sm: "text-[1.35rem] leading-tight sm:text-2xl md:text-3xl",
     md: "text-3xl md:text-4xl",
     lg: "text-4xl md:text-5xl",
     xl: "text-5xl md:text-6xl",
     "2xl": "text-6xl md:text-7xl",
   };
 
-  const toggleMenu = () => {
-    const newState = !isOpen;
-    setIsOpen(newState);
-    if (!newState) {
-      setExpandedIndex(null);
-    }
+  const closeMenu = useCallback(() => {
+    setIsOpen(false);
+    setExpandedIndex(null);
+    onClose?.();
+  }, [onClose]);
 
-    if (newState) {
-      onOpen?.();
-    } else {
-      onClose?.();
+  const toggleMenu = () => {
+    if (isOpen) {
+      closeMenu();
+      return;
     }
+    setIsOpen(true);
+    onOpen?.();
   };
 
   const handleItemClick = (item: MenuItem, index: number = -1) => {
     if (item.subItems && item.subItems.length > 0) {
-      setExpandedIndex(expandedIndex === index ? null : index);
+      setExpandedIndex((current) => (current === index ? null : index));
       return;
     }
 
-    if (item.onClick) {
-      item.onClick();
-    }
-
-    if (item.href && !item.onClick) {
-      window.location.href = item.href;
-    }
+    item.onClick?.();
 
     if (!keepOpenOnItemClick) {
-      setIsOpen(false);
-      setExpandedIndex(null);
-      onClose?.();
+      closeMenu();
     }
   };
 
-  // Close menu on escape key
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isFirstPathRef = useRef(true);
+  useEffect(() => {
+    if (isFirstPathRef.current) {
+      isFirstPathRef.current = false;
+      return;
+    }
+    closeMenu();
+  }, [pathname, closeMenu]);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
-        setIsOpen(false);
-        setExpandedIndex(null);
-        onClose?.();
+        closeMenu();
       }
     };
-
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+  }, [isOpen, closeMenu]);
 
-  const clipPathCenter = buttonRight 
-    ? `calc(100% - ${buttonRight})` 
-    : (buttonLeft || "60px");
+  useEffect(() => {
+    if (!isOpen) return;
 
-  return (
-    <div ref={containerRef} className={cn("absolute w-full h-full", className)}>
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Krona+One:wght@400&display=swap');
-          
-          .hamburger-overlay-${zIndex} {
-            position: relative;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: start;
-            align-items: center;
-            background: ${overlayBackground};
-            z-index: ${zIndex};
-            clip-path: circle(0px at ${clipPathCenter} ${buttonTop});
-            transition: clip-path ${animationDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            ${enableBlur ? "backdrop-filter: blur(10px);" : ""}
-            pointer-events: auto;
-          }
-          
-          .hamburger-overlay-${zIndex}.open {
-            clip-path: circle(150% at ${clipPathCenter} ${buttonTop});
-          }
-          
-          .hamburger-button-${zIndex} {
-            position: absolute;
-            ${buttonRight ? `right: ${buttonRight}; left: auto; transform: translate(50%, -50%);` : `left: ${buttonLeft || "60px"}; transform: translate(-50%, -50%);`}
-            top: ${buttonTop};
-            border-radius: 20px;
-            z-index: ${zIndex + 1};
-            background: ${buttonColor};
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            pointer-events: auto;
-          }
-          
-          .hamburger-button-${zIndex}:hover {
-            ${buttonRight ? `transform: translate(50%, -50%) scale(1.1);` : `transform: translate(-50%, -50%) scale(1.1);`}
-          }
-          
-          .hamburger-button-${zIndex}:focus {
-            outline: 2px solid ${textColor};
-            outline-offset: 2px;
-          }
-          
-          .hamburger-button-${zIndex} svg {
-            stroke: currentColor !important;
-          }
-          
-          .hamburger-button-${zIndex}[aria-expanded="true"] svg {
-            stroke: ${textColor} !important;
-          }
-          
-          .menu-items-${zIndex} {
-            ${menuDirection === "horizontal" ? "display: flex; flex-wrap: wrap; gap: 1rem;" : ""}
-            ${menuAlignment === "center" ? "text-align: center;" : ""}
-            ${menuAlignment === "right" ? "text-align: right;" : ""}
-          }
-          
-          .menu-item-${zIndex} {
-            position: relative;
-            list-style: none;
-            padding: 0.5rem 0;
-            cursor: pointer;
-            transform: translateX(-200px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            font-family: ${fontFamily};
-            font-weight: ${fontWeight};
-            color: ${textColor};
-            ${menuDirection === "horizontal" ? "display: inline-block; margin: 0 1rem;" : ""}
-          }
-          
-          .menu-item-${zIndex}.visible {
-            transform: translateX(0);
-            opacity: 1;
-          }
-          
-          .menu-item-${zIndex}::before {
-            content: "";
-            position: absolute;
-            left: -20%;
-            top: 50%;
-            transform: translate(-50%, -50%) translateX(-50%);
-            width: 25%;
-            height: 8px;
-            border-radius: 10px;
-            background: ${textColor};
-            opacity: 0;
-            transition: all 0.25s ease;
-            pointer-events: none;
-          }
-          
-          .menu-item-${zIndex}:hover::before {
-            opacity: 1;
-            transform: translate(-50%, -50%) translateX(0);
-          }
-          
-          .menu-item-${zIndex} span {
-            opacity: 0.7;
-            transition: opacity 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-          }
-          
-          .menu-item-${zIndex}:hover span {
-            opacity: 1;
-          }
-          
-          .menu-item-${zIndex}:focus {
-            outline: 2px solid ${textColor};
-            outline-offset: 2px;
-            border-radius: 4px;
-          }
-          
-          /* Mobile responsiveness */
-          @media (max-width: 768px) {
-            .hamburger-button-${zIndex} {
-              ${buttonRight ? `right: 24px; left: auto; transform: translate(50%, -50%);` : `left: 30px; transform: translate(-50%, -50%);`}
-              top: 30px;
-            }
-            
-            .hamburger-overlay-${zIndex} {
-              clip-path: circle(0px at ${buttonRight ? "calc(100% - 24px)" : "30px"} 30px);
-            }
-            
-            .hamburger-overlay-${zIndex}.open {
-              clip-path: circle(150% at ${buttonRight ? "calc(100% - 24px)" : "30px"} 30px);
-            }
-            
-            .menu-items-${zIndex} {
-              padding: 1rem;
-              max-height: 80vh;
-              overflow-y: auto;
-            }
-            
-            .menu-item-${zIndex} {
-              padding: 1rem 0;
-            }
-          }
-          
-          @media (max-width: 480px) {
-            .menu-items-${zIndex} {
-              ${menuDirection === "horizontal" ? "flex-direction: column; gap: 0;" : ""}
-            }
-            
-            .menu-item-${zIndex} {
-              ${menuDirection === "horizontal" ? "display: block; margin: 0;" : ""}
-            }
-          }
-        `}
-      </style>
+    const html = document.documentElement;
+    const body = document.body;
+    const scrollY = window.scrollY;
 
-      {/* Navigation Overlay */}
+    const previous = {
+      htmlOverflow: html.style.overflow,
+      htmlOverscroll: html.style.overscrollBehavior,
+      htmlScrollBehavior: html.style.scrollBehavior,
+      bodyOverflow: body.style.overflow,
+      bodyOverscroll: body.style.overscrollBehavior,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+    };
+
+    html.classList.add("nav-open");
+    html.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
+    html.style.scrollBehavior = "auto";
+    body.style.overflow = "hidden";
+    body.style.overscrollBehavior = "none";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+
+    const onTouchMove = (event: TouchEvent) => {
+      const target = event.target as Node | null;
+      if (target && scrollRef.current?.contains(target)) {
+        return;
+      }
+      event.preventDefault();
+    };
+
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    return () => {
+      document.removeEventListener("touchmove", onTouchMove);
+      html.classList.remove("nav-open");
+      html.style.overflow = previous.htmlOverflow;
+      html.style.overscrollBehavior = previous.htmlOverscroll;
+      html.style.scrollBehavior = previous.htmlScrollBehavior;
+      body.style.overflow = previous.bodyOverflow;
+      body.style.overscrollBehavior = previous.bodyOverscroll;
+      body.style.position = previous.bodyPosition;
+      body.style.top = previous.bodyTop;
+      body.style.left = previous.bodyLeft;
+      body.style.right = previous.bodyRight;
+      body.style.width = previous.bodyWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [isOpen]);
+
+  const clipOriginX = buttonRight
+    ? `calc(100% - ${buttonRight})`
+    : buttonLeft || "16px";
+  const clipOrigin = `${clipOriginX} ${buttonTop}`;
+
+  const rowClassName =
+    "flex items-center justify-between w-full min-h-[44px] cursor-pointer select-none touch-manipulation text-left";
+
+  const alignmentClass =
+    menuAlignment === "center"
+      ? "text-center items-center"
+      : menuAlignment === "right"
+        ? "text-right items-end"
+        : "text-left items-stretch";
+
+  const renderRow = (item: MenuItem, index: number) => {
+    const label = (
+      <span className="flex items-center gap-2 pointer-events-none">
+        {item.icon && <span className="menu-icon">{item.icon}</span>}
+        {item.label}
+      </span>
+    );
+
+    const chevron =
+      item.subItems && item.subItems.length > 0 ? (
+        <span
+          className={`text-xs transition-transform duration-300 ml-4 opacity-60 pointer-events-none ${
+            expandedIndex === index ? "rotate-180 text-brand-mint" : "rotate-0"
+          }`}
+        >
+          ▼
+        </span>
+      ) : null;
+
+    if (item.subItems && item.subItems.length > 0) {
+      return (
+        <button
+          type="button"
+          className={rowClassName}
+          aria-expanded={expandedIndex === index}
+          onClick={() => handleItemClick(item, index)}
+        >
+          {label}
+          {chevron}
+        </button>
+      );
+    }
+
+    if (item.href) {
+      return (
+        <Link
+          href={item.href}
+          className={rowClassName}
+          onClick={() => handleItemClick(item, index)}
+        >
+          {label}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        className={rowClassName}
+        onClick={() => handleItemClick(item, index)}
+      >
+        {label}
+      </button>
+    );
+  };
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      className={cn("lg:hidden", className)}
+      style={{ zIndex }}
+    >
       <div
-        ref={navRef}
-        className={cn(`flex flex-col items-center justify-center h-full
-           hamburger-overlay-${zIndex}`, isOpen && "open")}
+        className={cn(
+          "fixed inset-0 h-[100dvh] w-full",
+          isOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}
+        style={{ zIndex: isOpen ? zIndex : 0 }}
         aria-hidden={!isOpen}
       >
-        <ul
-          className={cn(
-            `mt-20 menu-items-${zIndex}`,
-            menuDirection === "horizontal" && "flex flex-wrap "
-          )}
-        >
-          {items.map((item, index) => (
-            <li
-              key={index}
-              className={cn(
-                `menu-item-${zIndex} flex flex-col items-start`,
-                fontSizes[fontSize],
-                isOpen && "visible",
-                menuItemClassName
-              )}
-              style={{
-                transitionDelay: isOpen ? `${index * staggerDelay}s` : "0s",
-              }}
-              role="button"
-              aria-label={`Navigate to ${item.label}`}
-            >
-              <div 
-                className="flex items-center justify-between w-full cursor-pointer select-none"
-                onClick={() => handleItemClick(item, index)}
-              >
-                <span className="flex items-center gap-2">
-                  {item.icon && <span className="menu-icon">{item.icon}</span>}
-                  {item.label}
-                </span>
-                {item.subItems && item.subItems.length > 0 && (
-                  <span className={`text-xs transition-transform duration-300 ml-4 opacity-60 ${
-                    expandedIndex === index ? 'rotate-185 text-brand-mint' : 'rotate-0'
-                  }`}>
-                    ▼
-                  </span>
-                )}
-              </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: overlayBackground,
+            clipPath: isOpen
+              ? `circle(150% at ${clipOrigin})`
+              : `circle(0px at ${clipOrigin})`,
+            transition: `clip-path ${animationDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+            pointerEvents: "none",
+          }}
+        />
 
-              {/* Sub-menu rendering */}
-              {item.subItems && item.subItems.length > 0 && expandedIndex === index && (
-                <ul className="pl-6 mt-3 space-y-2.5 w-full border-l-2 border-brand-mint/20 text-left">
-                  {item.subItems.map((sub, subIdx) => (
-                    <li
-                      key={subIdx}
-                      className="text-lg md:text-xl font-medium text-slate-350 hover:text-brand-mint cursor-pointer flex items-center gap-2 transition-colors py-1 select-none"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleItemClick(sub, -1);
-                      }}
-                    >
-                      {sub.icon && <span className="text-xs">{sub.icon}</span>}
-                      <span>{sub.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
+        <nav
+          ref={scrollRef}
+          id="navigation-menu"
+          className={cn(
+            "nav-overlay-scroll absolute inset-0 block",
+            isOpen ? "pointer-events-auto" : "pointer-events-none invisible"
+          )}
+          style={{
+            overflowY: "scroll",
+            overflowX: "hidden",
+            height: "100%",
+            maxHeight: "100dvh",
+            overscrollBehavior: "contain",
+            WebkitOverflowScrolling: "touch",
+            touchAction: "pan-y",
+            paddingTop: "5.25rem",
+            paddingLeft: "1.25rem",
+            paddingRight: "1.25rem",
+            paddingBottom: "calc(2rem + env(safe-area-inset-bottom, 0px))",
+          }}
+        >
+          <ul
+            className={cn(
+              "w-full max-w-xl mx-auto flex flex-col shrink-0",
+              alignmentClass,
+              menuDirection === "horizontal" && "flex-wrap gap-4"
+            )}
+            style={{ fontFamily, fontWeight, color: textColor }}
+          >
+            {items.map((item, index) => (
+              <li
+                key={index}
+                className={cn(
+                  "flex flex-col py-1 transition-all duration-300",
+                  fontSizes[fontSize],
+                  isOpen
+                    ? "translate-x-0 opacity-100"
+                    : "-translate-x-16 opacity-0",
+                  menuItemClassName
+                )}
+                style={{
+                  transitionDelay: isOpen ? `${index * staggerDelay}s` : "0s",
+                }}
+              >
+                {renderRow(item, index)}
+
+                {item.subItems &&
+                  item.subItems.length > 0 &&
+                  expandedIndex === index && (
+                    <ul className="pl-6 mt-2 mb-1 space-y-1 w-full border-l-2 border-brand-mint/20 text-left">
+                      {item.subItems.map((sub, subIdx) => (
+                        <li key={subIdx}>
+                          {sub.href ? (
+                            <Link
+                              href={sub.href}
+                              className="text-lg md:text-xl font-medium hover:text-brand-mint cursor-pointer flex items-center gap-2 transition-colors py-2 min-h-[44px] select-none touch-manipulation"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleItemClick(sub, -1);
+                              }}
+                            >
+                              {sub.icon && (
+                                <span className="text-xs">{sub.icon}</span>
+                              )}
+                              <span>{sub.label}</span>
+                            </Link>
+                          ) : (
+                            <button
+                              type="button"
+                              className="text-lg md:text-xl font-medium hover:text-brand-mint cursor-pointer flex items-center gap-2 transition-colors py-2 min-h-[44px] select-none touch-manipulation w-full text-left"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleItemClick(sub, -1);
+                              }}
+                            >
+                              {sub.icon && (
+                                <span className="text-xs">{sub.icon}</span>
+                              )}
+                              <span>{sub.label}</span>
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
 
-      {/* Hamburger Button */}
       <button
+        type="button"
         className={cn(
-          `hamburger-button-${zIndex}`,
+          "fixed flex items-center justify-center rounded-2xl border-none cursor-pointer touch-manipulation",
           buttonSizes[buttonSize],
+          isOpen ? "text-[#FDF8F5]" : "text-slate-800",
           buttonClassName
         )}
+        style={{
+          top: buttonTop,
+          right: buttonRight || "auto",
+          left: buttonRight ? "auto" : buttonLeft || "16px",
+          zIndex: isOpen ? zIndex + 10 : 10001,
+          background: buttonColor,
+          pointerEvents: "auto",
+        }}
         onClick={toggleMenu}
         aria-label={ariaLabel}
         aria-expanded={isOpen}
@@ -411,7 +422,6 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
                   : "opacity-100 rotate-0 scale-100"
               )}
               size={buttonSize === "sm" ? 16 : buttonSize === "md" ? 20 : 24}
-              color={textColor}
             />
             <X
               className={cn(
@@ -421,12 +431,12 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
                   : "opacity-0 -rotate-45 scale-0"
               )}
               size={buttonSize === "sm" ? 16 : buttonSize === "md" ? 20 : 24}
-              color={textColor}
             />
           </div>
         )}
       </button>
-    </div>
+    </div>,
+    document.body
   );
 };
 
