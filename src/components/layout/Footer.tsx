@@ -195,14 +195,14 @@ export default function Footer({ showWordmark = false }: FooterProps) {
             <p>© {currentYear} Pragna Group. All rights reserved.</p>
             <span className="hidden md:inline text-white/20">|</span>
             <p>
-              Designed & Developed by{" "}
+              Designed by{" "}
               <a
-                href="https://devphant.com/"
+                href="https://www.instagram.com/bigartstudio?utm_source=qr&igsi=bDFhem1yc29leTRn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white hover:text-brand-mint font-medium transition-all duration-300 relative group"
               >
-                devphant
+                BigArts Studio
                 <span className="absolute bottom-0 left-0 w-0 h-px bg-brand-mint transition-all duration-300 group-hover:w-full"></span>
               </a>
             </p>
