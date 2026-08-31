@@ -23,9 +23,9 @@ export default function GroupCompanies() {
     { name: 'PRAGNA PHARMA PVT LTD', loc: 'DAHEJ', since: '2017', desc: 'Manufacturing of Speciality & Fine Chemicals & Agro Chemicals Intermediates', address: 'Plot No.D2/CH/224 & D2/CH/224/1 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_pharma_pvt_ltd.png' },
     { name: 'GREEN LEAF CHEM TECH PVT LTD', loc: 'DAHEJ', since: '2021', desc: 'Manufacturing of Pharma & Pharma Intermediates', address: 'Plot No.D2/CH/231 & D2/CH/232 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/green_leaf_tech_logo.png' },
     { name: 'PRAGNA CHEM TECH PVT LTD', loc: 'ANKLESHWAR', since: '2022', desc: 'Manufacturing of Dyes & Intermediates', address: 'Plot No.707/D, GIDC Estate, Ankleshwar-393002.', logo: '/assets/pragna_group.png' },
-    { name: 'PRAGNA SPECIALITY PVT LTD', loc: 'DAHEJ', since: '2023', desc: 'Manufacturing of Speciality & Agro Chemicals', address: 'Plot No.D2/CH/223 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_speciality.png' },
-    { name: 'SHREE RAMKRISHNA CHEM TECH PVT LTD', loc: 'DAHEJ', since: '2023', desc: 'Manufacturing of Pharma & Pharma Intermediates', address: 'Plot No.D2/CH/170/1 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_group.png' },
-    { name: 'PRAGNA FINE CHEM PVT LTD', loc: 'DAHEJ', since: '2023', desc: 'Manufacturing of Chemical, Petrochemical & Pharma Intermediates', address: 'Plot No.D2/CH/149/4 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_group.png' },
+    { name: 'PRAGNA SPECIALITY PVT LTD', loc: 'DAHEJ', since: '2022', desc: 'Manufacturing of Speciality & Agro Chemicals', address: 'Plot No.D2/CH/223 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_speciality.png' },
+    { name: 'SHREE RAMKRISHNA CHEM TECH PVT LTD', loc: 'DAHEJ', since: '2024', desc: 'Manufacturing of Pharma & Pharma Intermediates', address: 'Plot No.D2/CH/170/1 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_group.png' },
+    { name: 'PRAGNA FINE CHEM PVT LTD', loc: 'DAHEJ', since: '2024', desc: 'Manufacturing of Chemical, Petrochemical & Pharma Intermediates', address: 'Plot No.D2/CH/149/4 GIDC, DAHEJ-2, Near Jolva, Tal-Vagra, Dist-Bharuch-392130.', logo: '/assets/pragna_group.png' },
   ];
 
   // Re-trigger entrance animation when cards layout mount or filter shifts
