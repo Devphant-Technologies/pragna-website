@@ -85,28 +85,28 @@ export default function StatsSection() {
     {
       stats: [
         { end: 9, suffix: '', label: 'Manufacturing Sites' },
-        { end: 30000, suffix: '+', label: 'MTPA Installed Capacity' },
+        { end: 10000, suffix: '+', label: 'MTPA Installed Capacity' },
       ],
       staggerClasses: ["mt-0", ""],
     },
     {
       stats: [
         { end: 60, suffix: '+', label: 'Complex Molecules' },
-        { end: 30, suffix: '+', label: 'Commercial Chemistries' },
+        { end: 20, suffix: '+', label: 'Commercial Chemistries' },
       ],
       staggerClasses: ["mt-6", ""],
     },
     {
       stats: [
-        { end: 1700, suffix: '+', label: 'Empowered Workforce' },
-        { end: 90, suffix: '+', label: 'Scientists' },
+        { end: 1100, suffix: '+', label: 'Empowered Workforce' },
+        { end: 10, suffix: '+', label: 'Scientists' },
       ],
       staggerClasses: ["mt-0", ""],
     },
     {
       stats: [
         { end: 27, suffix: '+', label: 'Years of Experience' },
-        { end: 80, suffix: '+', label: 'Customers' },
+        { end: 50, suffix: '+', label: 'Customers' },
       ],
       staggerClasses: ["mt-6", ""],
     },
