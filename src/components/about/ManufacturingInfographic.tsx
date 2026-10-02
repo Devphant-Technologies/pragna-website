@@ -121,13 +121,13 @@ export default function ManufacturingInfographic() {
     <>
       <section
         ref={sectionRef}
-        className="relative overflow-hidden bg-[#07111f] py-20 md:py-28"
+        className="relative overflow-hidden bg-[#ffffff] py-20 md:py-28"
       >
         <div
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(41,182,246,0.55) 1px, transparent 0)",
+              "radial-gradient(circle at 1px 1px, rgba(13,13,57,0.35) 1px, transparent 0)",
             backgroundSize: "28px 28px",
           }}
         />
@@ -142,7 +142,6 @@ export default function ManufacturingInfographic() {
               highlight="Capabilities"
               subtitle="A live reaction map of the core chemistries running across our manufacturing network — hover a node to trace the pathway."
               align="center"
-              light
             />
           </div>
 
@@ -182,7 +181,7 @@ export default function ManufacturingInfographic() {
                     y1={link.from.y}
                     x2={link.to.x}
                     y2={link.to.y}
-                    stroke={lit ? "rgba(126,194,66,0.55)" : "rgba(148,163,184,0.18)"}
+                    stroke={lit ? "rgba(126,194,66,0.65)" : "rgba(13,13,57,0.12)"}
                     strokeWidth={link.strong ? 0.35 : 0.18}
                     className="transition-all duration-300"
                   />
@@ -263,6 +262,7 @@ export default function ManufacturingInfographic() {
               badge="Plant Systems"
               title="Site"
               highlight="Infrastructure"
+              highlightClassName="text-[#02457A]"
               subtitle="A schematic view of land, reactor volume, equipment range and utility envelope — read as a plant dashboard, not a spec sheet."
               align="center"
             />

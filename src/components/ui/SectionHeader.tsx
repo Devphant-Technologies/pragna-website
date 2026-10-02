@@ -12,12 +12,13 @@ interface SectionHeaderProps {
   badge: string;
   title: string;
   highlight?: string;
+  highlightClassName?: string;
   subtitle?: string;
   align?: 'left' | 'center';
   light?: boolean;
 }
 
-export default function SectionHeader({ badge, title, highlight, subtitle, align = 'center', light = false }: SectionHeaderProps) {
+export default function SectionHeader({ badge, title, highlight, highlightClassName = 'text-brand-cyan', subtitle, align = 'center', light = false }: SectionHeaderProps) {
   const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function SectionHeader({ badge, title, highlight, subtitle, align
       </span>
       <h2 className={`text-3xl md:text-5xl font-bold leading-tight tracking-tight mt-1 opacity-0 ${light ? 'text-white' : 'text-black'} sm:whitespace-nowrap`}>
         {title}{' '}
-        {highlight && <span className="text-brand-cyan">{highlight}</span>}
+        {highlight && <span className={highlightClassName}>{highlight}</span>}
       </h2>
       {subtitle && (
         <p className={`section-subtitle text-base md:text-lg leading-relaxed font-light max-w-2xl opacity-0 ${align === 'center' ? 'mx-auto' : ''} ${light ? 'text-slate-200' : 'text-slate-600'}`}>
