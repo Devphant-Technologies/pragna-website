@@ -262,7 +262,7 @@ export default function ManufacturingInfographic() {
               badge="Plant Systems"
               title="Site"
               highlight="Infrastructure"
-              highlightClassName="text-[#0D0D39]"
+              highlightClassName="text-[#0A5C9A]"
               subtitle="A schematic view of land, reactor volume, equipment range and utility envelope — read as a plant dashboard, not a spec sheet."
               align="center"
             />
