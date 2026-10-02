@@ -121,7 +121,7 @@ export default function ManufacturingInfographic() {
     <>
       <section
         ref={sectionRef}
-        className="relative overflow-hidden bg-white py-20 md:py-28"
+        className="relative overflow-hidden bg-[#ffffff] py-20 md:py-28"
       >
         <div
           className="absolute inset-0 opacity-[0.12]"
