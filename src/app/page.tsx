@@ -61,7 +61,7 @@ export default function Home() {
             </div>
 
             {/* Desktop View: ScrollStack animation */}
-            <div className="hidden lg:block bg-[#90D5FF] pt-12 pb-4 w-full overflow-hidden">
+            <div className="hidden lg:block bg-[#90D5FF] pt-12 pb-0 w-full overflow-hidden relative z-0">
               <ScrollStack
                 useWindowScroll={true}
                 itemDistance={100}
