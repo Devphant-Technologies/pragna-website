@@ -113,7 +113,7 @@ export default function StatsSection() {
   ];
 
   return (
-    <section className="pt-4 pb-16 lg:pt-6 lg:pb-20 bg-[#90D5FF] text-white relative overflow-hidden">
+    <section className="pt-4 pb-16 lg:pt-6 lg:pb-20 bg-[#90D5FF] text-white relative z-10 overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 opacity-[0.1]" style={{
         backgroundImage: 'radial-gradient(circle at 2px 2px, #0D0D39 1px, transparent 0)',
